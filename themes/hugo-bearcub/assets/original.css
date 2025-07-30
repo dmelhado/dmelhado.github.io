@@ -188,3 +188,11 @@ figcaption > p {
   font-style: italic;
   color: #555;
 }
+
+.project-description {
+  font-size: 1.1em;
+  color: #555;
+  margin-top: 0.2em;
+  margin-bottom: 1em;
+  font-style: italic;
+}

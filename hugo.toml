@@ -28,7 +28,7 @@ enableRobotsTXT = true
     LanguageCode = "en-US"
     contentDir = "content"
     [languages.en.params]
-      madeWith = "Made with [Bear Cub](https://github.com/clente/hugo-bearcub)"
+      madeWith = "Made with [Hugo](https://gohugo.io/) and [Bear Cub](https://github.com/clente/hugo-bearcub)"
 
 ## Aditional navbar buttons
 [menu]
