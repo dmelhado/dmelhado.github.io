@@ -30,6 +30,13 @@ enableRobotsTXT = true
     [languages.en.params]
       madeWith = "Made with [Bear Cub](https://github.com/clente/hugo-bearcub)"
 
+## Aditional navbar buttons
+[menu]
+  [[menu.main]]
+    name = "Projects"
+    url = "/projects/"
+    weight = 3
+
 [params]
   # The description of your website
   description = "Dante Melhado"
@@ -78,3 +85,4 @@ enableRobotsTXT = true
   [params.author]
     name = "Dante Melhado" # Your name as shown in the RSS feed metadata
     email = "dmelhado@dc.uba.ar" # Added to the footer so readers can reply to posts
+
