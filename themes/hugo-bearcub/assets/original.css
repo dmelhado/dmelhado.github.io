@@ -3,12 +3,12 @@ body {
   margin: auto;
   padding: 20px;
   max-width: 1080px;
-  text-align: left;
-  background-color: #ffffff;
+  text-align: justify;
+  background-color: #181818;
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.5;
-  color: #222222;
+  color: #c9d1d9;
 }
 
 html {
@@ -23,11 +23,11 @@ h5,
 h6,
 strong,
 b {
-  color: #111111;
+   color: #eee;
 }
 
 a {
-  color: #0066cc;
+  color: #8cc2dd;
 }
 
 .title {
@@ -48,15 +48,15 @@ nav a {
 }
 
 textarea {
-  background-color: #f0f0f0;
-  color: #222;
+  background-color: #252525;
+  color: #ddd;
   width: 100%;
   font-size: 16px;
 }
 
 input {
-  background-color: #f0f0f0;
-  color: #222;
+  background-color: #252525;
+  color: #ddd;
   font-size: 16px;
 }
 
@@ -73,7 +73,7 @@ th,
 td {
   border: 1px solid;
   border-collapse: collapse;
-  border-color: #555;
+  border-color: #c9d1d9;
   padding: 5px;
 }
 
@@ -81,13 +81,13 @@ img {
   display: block;
   margin: 1em auto;
   max-width: 100%;
-  height: auto;
+  max-height: 480px;
 }
 
 code {
   padding: 2px 5px;
-  color: #c7254e;
-  background-color: #f9f2f4;
+  color: #f8f8f2;
+  background-color: #282a36;
 }
 
 pre code {
@@ -97,13 +97,11 @@ pre code {
   font-size: 14px;
   overflow-x: auto;
   text-wrap: nowrap;
-  background-color: #f0f0f0;
-  color: #111;
 }
 
 blockquote {
   border-left: 4px solid #999;
-  color: #555;
+  color: #ccc;
   padding-left: 20px;
   font-style: italic;
   background-color: #f9f9f9;
@@ -115,12 +113,12 @@ footer {
 }
 
 .helptext {
-  color: #777;
+  color: #aaa;
   font-size: small;
 }
 
 .errorlist {
-  color: #c0392b;
+  color: #eba613;
   font-size: small;
 }
 
@@ -140,7 +138,7 @@ ul.blog-posts li span {
 }
 
 ul.blog-posts li a:visited {
-  color: #7b59b0;
+  color: #8b6fcb;
 }
 
 a.blog-tags {
@@ -168,7 +166,7 @@ p.byline {
   top: 5;
   transform: translateY(-600%);
   transition: transform 0.5s;
-  background-color: #ffffff;
+  background-color: #1d1f27;
   color: #222;
   padding: 6px;
 }
@@ -186,12 +184,12 @@ figcaption > p {
   margin-block-start: 0px;
   text-align: center;
   font-style: italic;
-  color: #555;
+  color: #ccc;
 }
 
 .project-description {
   font-size: 1.1em;
-  color: #555;
+  color: #ccc;
   margin-top: 0.2em;
   margin-bottom: 1em;
   font-style: italic;

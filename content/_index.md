@@ -13,7 +13,7 @@ Personal website where I'll post some of my thoughts, experiments, failures, and
 - By 10, I was already messing with hardware and software. I broke a lot of perfectly good setups doing this.
 - At 19, I began a Computer Science degree at UBA, which I left after four years. I'm currently studying Computer Systems at UNGS.
 - I worked at an RPA consulting firm for two years but was let go due to staff cuts.
-- Since then I explored other skills, including electronic repairs and web development (which led to this site). Most of them self taught.
+- Since then I explored other skills, including electronic repairs and web development (which led to this site). Most of them self-taught.
 - Today I juggle freelance phone and computer repairs and food delivery. It's not glamorous, but it pays the bills. 
 
 ## Some of my interests

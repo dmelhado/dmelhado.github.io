@@ -9,7 +9,188 @@
     <managingEditor>dmelhado@dc.uba.ar (Dante Melhado)</managingEditor>
     <webMaster>dmelhado@dc.uba.ar (Dante Melhado)</webMaster>
     <copyright>dmelhado@dc.uba.ar</copyright>
-    <lastBuildDate>Wed, 30 Jul 2025 23:51:01 -0300</lastBuildDate>
+    <lastBuildDate>Thu, 07 Aug 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Prerendered Backgrounds with Blender and Godot</title>
+      <link>http://localhost:1313/blog/prerendered-backgrounds-with-blender-and-godot/</link>
+      <pubDate>Thu, 07 Aug 2025 00:00:00 +0000</pubDate><author>dmelhado@dc.uba.ar (Dante Melhado)</author>
+      <guid>http://localhost:1313/blog/prerendered-backgrounds-with-blender-and-godot/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/prerendered-godot/demo.png&#34; alt=&#34;Demo&#34;&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;terminology&#34;&gt;Terminology&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Background: The prerendered static part of the screen during gameplay.&lt;/li&gt;&#xA;&lt;li&gt;3D object: &amp;ldquo;Real&amp;rdquo; object that the player can interact and fully rendered in real time (e.g. the player model, pickable items).&lt;/li&gt;&#xA;&lt;li&gt;Background object: Things in the prerendered background that &lt;em&gt;can&lt;/em&gt; appear on top of 3D objects (e.g. walls, tables)&lt;/li&gt;&#xA;&lt;li&gt;Projection plane: Flat surface placed in 3D space that receives a rendered image to create the illusion of depth and occlusion.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;some-context&#34;&gt;Some context&lt;/h2&gt;&#xA;&lt;p&gt;Back in the early 2000s, one of my friends brought his PS1 and a  pirated copy of Resident Evil. That was my first contact with the series. My family and I were astonished on how good the game looked (all we&amp;rsquo;ve seen up to that point were some old arcade games in MAME and a knockoff NES clone). It&amp;rsquo;s common knowledge by now that the trick to make the game look that good in such a weak system was to render a 3D static scene in a computer application, like Softimage 3D or 3D Studio, put it in the game, put 3D objects on top of that and make the game camera match the one used in the 3D render. Ever since I found out, I wanted to recreate that aesthetic on my own. In this post I will share a method I found to recreate the static scenes of these old games.&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p><img src="/images/prerendered-godot/demo.png" alt="Demo"></p>
+<h3 id="terminology">Terminology</h3>
+<ul>
+<li>Background: The prerendered static part of the screen during gameplay.</li>
+<li>3D object: &ldquo;Real&rdquo; object that the player can interact and fully rendered in real time (e.g. the player model, pickable items).</li>
+<li>Background object: Things in the prerendered background that <em>can</em> appear on top of 3D objects (e.g. walls, tables)</li>
+<li>Projection plane: Flat surface placed in 3D space that receives a rendered image to create the illusion of depth and occlusion.</li>
+</ul>
+<h2 id="some-context">Some context</h2>
+<p>Back in the early 2000s, one of my friends brought his PS1 and a  pirated copy of Resident Evil. That was my first contact with the series. My family and I were astonished on how good the game looked (all we&rsquo;ve seen up to that point were some old arcade games in MAME and a knockoff NES clone). It&rsquo;s common knowledge by now that the trick to make the game look that good in such a weak system was to render a 3D static scene in a computer application, like Softimage 3D or 3D Studio, put it in the game, put 3D objects on top of that and make the game camera match the one used in the 3D render. Ever since I found out, I wanted to recreate that aesthetic on my own. In this post I will share a method I found to recreate the static scenes of these old games.</p>
+<p><img src="/images/prerendered-godot/re1.jpg" alt="Screenshot of Resident Evil on PS1"></p>
+<p>The part of getting 3D objects on top of a picture is easy. My first attempt was rendering a simple room and matching the blender camera values with those of a Raylib camera (unfortunately, I no longer have any screenshots or code from that prototype.). It worked fine, but as soon as you want to add background objects in the prerender that could appear on top of the 3D objects, it gets a little bit more complicated. You need to somehow tell the engine &ldquo;See this specific pixel of the background? It&rsquo;s supposed to be in front of the 3D object right now, so paint it after drawing the 3d object&rdquo;. In this attempt, I had two renders: the &ldquo;albedo&rdquo;, which is what you end up seeing in game, and the &ldquo;depth map&rdquo;, which is a black and white image that tells how far things are in the render. The darker the pixel, the closest it is to the camera.</p>
+<p><img src="/images/prerendered-godot/albedo_and_depth_example.png" alt="Example of Albedo and Depth"></p>
+<p>In theory, you could check the color of the depth map to determine the order the albedo pixels should be drawn. This had two problems I was never able to solve:</p>
+<ul>
+<li>It involves writing shaders. They should be perfect for this situation since they take care of pixel logic instantly in the GPU. I gave it a very long try but I can&rsquo;t wrap my head around shader programming, so I gave up.</li>
+<li>The depth map is not that precise. After trying the shader way, I made a simple CPU logic of &ldquo;if a depth pixel is darker than X, then draw it again on top of everything&rdquo; just to make a proof of concept of what it would look like. It was not that good. The edges of the objects looked really noisy and it wasn&rsquo;t a clear cut, because of the way blender renders the depth map. I think it&rsquo;s possible to fix this in Blender, but at that point I already moved on with other methods. The animation below highlights every shade of gray of the depth map, and it&rsquo;s possible to see how noisy they are.</li>
+</ul>
+<p><img src="/images/prerendered-godot/depth-animation-v2.gif" alt="Animation showing the noisy depth map"></p>
+<ul>
+<li>Even if I succeeded writing a shader, the solution is too finicky and you have to manually set variables both in Blender and the game engine to match how far or near things are, or the 3D objects will appear at the wrong depth, and you have to do this for each camera angle you want to add. You need automate the process of setting up the depth range variables to streamline the process a bit more.</li>
+</ul>
+<p>I put the project on hold for a while and tried doing it again, but this time in Godot. I found a <a href="https://www.youtube.com/watch?v=oFMcilEdfs0">video</a> by FinePointCGI, where he renders the image and projects it on top of every scene object and imports the complete 3D scene into Godot. While this works, this has the following problems:</p>
+<ul>
+<li>Excess of polygons. After all, the point of this is to lower resource usage.</li>
+<li>The projection is improper along slanted faces and will look weird around the edges. If you&rsquo;re gonna do projections on planes, your best bet is to make them as perpendicular to the camera angle as possible.</li>
+</ul>
+<h2 id="my-method">My method</h2>
+<p>While this method is not as efficient as they were on old systems, it has the following benefits:</p>
+<ul>
+<li>Should run on any today&rsquo;s toaster.</li>
+<li>I think it looks convincing (for a 90&rsquo;s industry standard. It&rsquo;s not UE5 with RT).</li>
+<li>Importing it to your game is almost trivial. I made this in Godot, but I think it&rsquo;s even engine independent, as long as your engine allows importing .gltf files. I haven&rsquo;t explored alternatives like UE or Unity.</li>
+</ul>
+<p>It consists of strategically placed planes and projecting parts of the background render to those. So in essence, the background is just another 3D static object perfectly aligned to give the illusion of being a more complex thing.</p>
+<p><img src="/images/prerendered-godot/plane-highlight.png" alt="Screenshot highlighting a background object plane"></p>
+<h3 id="modeling-and-rendering">Modeling and rendering</h3>
+<p>First, model the complete room to be rendered in Blender and choose some camera angles. There&rsquo;s not a lot of science for this, besides common 3D modeling knowledge. You&rsquo;re pretty much free to do what you want at this stage.</p>
+<p><img src="/images/prerendered-godot/room.png" alt="Comparison of intended perspective and reality"></p>
+<p>While we are at it, render the camera views. You also need cropped renders isolating the background objects that could be drawn on top of the 3D objects to transparent images, and later will project to projection planes. I do not recommend manually cropping these in an image processor, as we can set Blender to render only the object we want while keeping lighting information. We can achieve this by making two collections: one with the objects we want to isolate, and the other with everything else (including light sources). We right click the later collection and pick &ldquo;View Layer &gt; Set Holdout&rdquo;. This doesn&rsquo;t exactly &ldquo;hide&rdquo; the objects of the second collection but will be rendered invisible while still affecting the lighting in the first collection. I recommend making this separation just for the cropped render and undoing this after rendering.</p>
+<p><img src="/images/prerendered-godot/room-2-layers.gif" alt="Both full and cropped renders of first room"></p>
+<p>In the case there are multiple background objects overlapping, we have to make a render for each layer of objects: one with only the nearest object, another with both this object and the one behind it, and so on until all layers are rendered.
+<img src="/images/prerendered-godot/room-3-layers.gif" alt="3 layers of objects"></p>
+<p>I think it&rsquo;s possible to make a more automated solution using cryptomattes, as it can separate every layer in just one render, but requires compositing knowledge that I don&rsquo;t have right now and this method works fine for this.</p>
+<h3 id="collision-data">Collision data</h3>
+<p>Make a low poly version of the room that will serve as collision data. What I like to do is make a giant cube surrounding the complete play area, cast the walls of the render room to it using a boolean modifier and then add additional simple meshes matching the render room objects in edit mode. This will help both for character navigation and to place the projection planes.
+<img src="/images/prerendered-godot/collision.png" alt="View of collision data"></p>
+<h3 id="projection-planes">Projection planes</h3>
+<p>We are ready to start dealing with the cameras and their projections. For now we&rsquo;ll take care about their positioning and unwrapping their UVs. We&rsquo;ll worry about their material later. Please note some screenshots in this section already have their needed material applied for visual aid.</p>
+<p>The main background is pretty easy. We need to put a plane behind everything to project our main render into and make it perfectly perpendicular to the camera. We can do this automatically following:</p>
+<ol>
+<li>Create a new plane. Make it the same aspect ratio as the game window.</li>
+<li>Make sure the chosen camera is the active one and switch to its view with Numpad 0.</li>
+<li>Set the transform orientation to &ldquo;View&rdquo;</li>
+<li>Orient the plane towards the camera by clicking &ldquo;Object &gt; Transform &gt; Align to Transform Orientation&rdquo;</li>
+<li>Without rotating the plane, move it behind the farthest collision mesh point a 3D object could be at that camera angle.</li>
+<li>Switch back to the camera view, and scale and move the plane to completely fill the frame. It&rsquo;s OK to overfill it, just make sure it&rsquo;s completely filled.</li>
+</ol>
+<p><img src="/images/prerendered-godot/main_plane.png" alt="View of main plane from camera viewpoint and side"></p>
+<p>We want to plaster the main render into the plane later. From the camera view, switch to Edit mode, &ldquo;UV &gt; Project from view&rdquo;. This will make the render sit exactly where we need it in the plane. Ignore the distortions in the borders. Since they are out of frame, they won&rsquo;t be noticed in game.
+<img src="/images/prerendered-godot/background-uv.png" alt="View of main plane from camera viewpoint and side with material"></p>
+<p>Now we get to the interesting part. We know thanks to the collision mesh where the player (or any object for that matter) <strong>won&rsquo;t</strong> be. We can take advantage of that. Since no 3D object will be present inside those areas, we can place planes inside them and project the render to them while ensuring the player won&rsquo;t clip through it.
+<img src="/images/prerendered-godot/plane-in-collision-box.png" alt="View of main plane from camera viewpoint and side with material"></p>
+<p>Since the projection plane is just another 3D object, it naturally occludes anything behind it, and no more special tricks are needed.
+<img src="/images/prerendered-godot/perspectives.png" alt="Comparison of intended perspective and reality"></p>
+<p>We UV unwrap this plane the same way as we did for the main plane. With this, the cropped render will sit nicely on top of the projection plane and maintaining the illusion it&rsquo;s not there.
+<img src="/images/prerendered-godot/background-object-uv.png" alt="UV map of background object"></p>
+<p>Due to how Blender deals with geometry and UV maps (as far as I understand), if you have only one face for the projection plane the image will distort a lot. This issue will transfer to Godot as well. A solution for this is simply subdivide the plane into more polygons. The more subdivided it is, the less distortion will be present. From my experiments, the irregularity of the shape in the UV map affects the amount of distortion, meaning the sweet spot varies per case.</p>
+<p><img src="/images/prerendered-godot/distortion-levels.gif" alt="Animation comparing the distortion according to the poly count"></p>
+<h3 id="materials">Materials</h3>
+<p>We get to actually paint these planes with the renders. We want to show them completely unshaded, with no shadows, lights, reflections; just the renders.</p>
+<ul>
+<li>For the main planes, we need the &ldquo;Emission&rdquo; material with a Strength of 1. This way it won&rsquo;t be affected with external lights sources nor add lighting to the scene. As for the color, just set Image Texture and pick the main render image.
+<img src="/images/prerendered-godot/main-plane-material.png" alt="Material options for the main plane"></li>
+<li>For the background objects, it&rsquo;s not as straight forward as there&rsquo;s a transparent portion of the image. If we just use the plain PNG as before, it will completely fill the transparent portions. We need to keep the emission material in the opaque portions and use a different one in the transparent ones. To do this it&rsquo;s necessary to use nodes. The following configuration will mix an emission material with some transparency according to the alpha channel of the cropped render:
+<img src="/images/prerendered-godot/background-object-nodes.png" alt="Background object plane image nodes"></li>
+</ul>
+<h3 id="wrapping-up-and-getting-everything-into-godot">Wrapping up and getting everything into Godot</h3>
+<p>Once you&rsquo;re happy with the result, I recommend joining all the planes into a single mesh, so they will behave as a single object.</p>
+<p>You&rsquo;ll probably want to make more than one angle for your scene. What I did was group the cameras and their respective background in a collection for each.
+<img src="/images/prerendered-godot/collections.png" alt="Blender project collections"></p>
+<p>With all of this, we&rsquo;re ready to get this into Godot. We will export a .gltf package with the cameras and their background, and the collision geometry.</p>
+<p>In Godot, we will import the package. This is how it will look. A mess with every plane and collision visible and collisions at the same time.</p>
+<p><img src="/images/prerendered-godot/godot-gltf-imported.png" alt="Mess of objects in Godot"></p>
+<p>The good thing about the GLTF format is that it the import brings everything exactly as Blender exported them, but we need to organize this a little bit. This won&rsquo;t be a fully fleshed Godot tutorial because I barely know it, but we want to do the following:</p>
+<ul>
+<li>Separate the camera + projections pairs (from now on: &ldquo;angles&rdquo;) to their own 3D node, and add a trigger to each one.</li>
+<li>Make an invisible static body out of the collision mesh</li>
+<li>Add a player with basic movement, and some global directional lighting so it doesn&rsquo;t look like a floating black bean.</li>
+</ul>
+<p>Here’s how I organized the nodes after importing the .gltf file:</p>
+<p><img src="/images/prerendered-godot/godot-scene-organization.png" alt="Before and after node organization"></p>
+<h3 id="scripts">Scripts</h3>
+<p>We need to write two scripts:</p>
+<ul>
+<li>A parent camera controller script attached to the Angles node. On trigger, it will iterate through all its children angles, deactivate all angles but keep only the one that triggered it.</li>
+</ul>
+
+
+
+
+
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript" data-lang="gdscript"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">extends</span> <span class="nc">Node3D</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># Called when the node enters the scene tree for the first time.</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="kd">func</span> <span class="nf">_ready</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="nf">hide_all_angles</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="k">pass</span> <span class="c1"># Replace with function body.</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="kd">func</span> <span class="nf">set_active_camera</span><span class="p">(</span><span class="n">angle</span><span class="p">:</span> <span class="nc">Node3D</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="nf">hide_all_angles</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="k">if</span><span class="p">(</span><span class="n">angle</span><span class="o">.</span><span class="nf">has_method</span><span class="p">(</span><span class="s2">&#34;activate_camera&#34;</span><span class="p">)):</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">		<span class="n">angle</span><span class="o">.</span><span class="nf">activate_camera</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"># Called every frame. &#39;delta&#39; is the elapsed time since the previous frame.</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="kd">func</span> <span class="nf">_process</span><span class="p">(</span><span class="n">delta</span><span class="p">:</span> <span class="kt">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="k">pass</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="kd">func</span> <span class="nf">hide_all_angles</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="nf">get_children</span><span class="p">(</span><span class="kc">false</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">		<span class="k">if</span><span class="p">(</span><span class="n">angle</span><span class="o">.</span><span class="nf">has_method</span><span class="p">(</span><span class="s2">&#34;disable_camera&#34;</span><span class="p">)):</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">			<span class="n">angle</span><span class="o">.</span><span class="nf">disable_camera</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="k">pass</span></span></span></code></pre></div><ul>
+<li>A child single angle script attached to every angle. It will take care of calling the camera controller script as well as changing the visibility of its own objects.</li>
+</ul>
+
+
+
+
+
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript" data-lang="gdscript"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">extends</span> <span class="nc">Node3D</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="nd">@export</span> <span class="kd">var</span> <span class="n">player_node_path</span><span class="p">:</span> <span class="nc">NodePath</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="kd">var</span> <span class="n">player</span><span class="p">:</span> <span class="nc">Node</span> <span class="o">=</span> <span class="kt">null</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="kd">func</span> <span class="nf">_ready</span><span class="p">():</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="n">player</span> <span class="o">=</span> <span class="nf">get_node</span><span class="p">(</span><span class="n">player_node_path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="kd">func</span> <span class="nf">_on_trigger_area_entered</span><span class="p">(</span><span class="n">area</span><span class="p">:</span> <span class="nc">Area3D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="k">pass</span> <span class="c1"># Replace with function body.</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="kd">func</span> <span class="nf">_on_trigger_body_entered</span><span class="p">(</span><span class="n">body</span><span class="p">:</span> <span class="nc">Node3D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">void</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="k">if</span> <span class="n">body</span> <span class="o">==</span> <span class="n">player</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">		<span class="kd">var</span> <span class="n">angles</span> <span class="o">=</span> <span class="nf">get_parent</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">		<span class="k">if</span> <span class="n">angles</span><span class="o">.</span><span class="nf">has_method</span><span class="p">(</span><span class="s2">&#34;set_active_camera&#34;</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">			<span class="n">angles</span><span class="o">.</span><span class="nf">set_active_camera</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="k">pass</span> <span class="c1"># Replace with function body.</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">	
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="kd">func</span> <span class="nf">activate_camera</span><span class="p">():</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="nx">$Camera</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="nx">$background</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">	<span class="k">pass</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">	
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="kd">func</span> <span class="nf">disable_camera</span><span class="p">():</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="nx">$Camera</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">	<span class="nx">$background</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">	<span class="k">pass</span></span></span></code></pre></div><p>If everything went right, the game should switch seamlessly between angles.
+<img src="/images/prerendered-godot/gameplay-demo.gif" alt="Animation showing gameplay"></p>
+<p>We can see how it works behind cameras here:
+<img src="/images/prerendered-godot/freecam-demo.gif" alt="Animation showing the camera changes from a fixed angle"></p>
+<h2 id="some-limitations">Some limitations</h2>
+<p>This approach works fine for situations there&rsquo;s not much vertical sense (like for example Doom, which is essentially a 2D game with a 3D viewport). If, for example, you want to add a table where you can place a pickable ammo box on any part of its surface, the box could be obscured by the projection plane.</p>
+<p><img src="/images/prerendered-godot/ammo-box-render-scene.png" alt="Screenshot showing perfectly fine ammo box sitting unobstructed on the table">
+<img src="/images/prerendered-godot/ammo-box-projection.png" alt="Screenshot showing same ammo box sitting but obstructed in the prerendered view"></p>
+<p>A possible solution is to add more planes, including a horizontal one, but not a single vertical plane for the whole object like it was shown. The more complex the background object is, the more projection planes you might need. There&rsquo;s not one catch-all solution and it will vary depending on the situation. Below you can see a quick and dirty shape I made to solve this particular situation, but there&rsquo;s probably a more efficient shape less prone to distortions. This shape allows to place an object at any point of the table, regardless of any prerendered objects on top of it.</p>
+<p><img src="/images/prerendered-godot/projection-workaround.png" alt="Screenshot showing same ammo box sitting but obstructed in the prerendered view"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>That&rsquo;s pretty much about it. I don&rsquo;t have plans to expand it into a complete product for now, but I do have some ideas. I had a lot of fun doing this project that&rsquo;s been in my head for years. If you want to research more into it, I dropped both the Godot and Blender projects to a GitHub repo. Feel free to grab it and do whatever you want with it. If you do end up making something with it, I would like to see it. Link below.</p>
+<h2 id="some-links">Some links</h2>
+<p><a href="https://github.com/dmelhado/godot-prerendered-background-concept">GitHub repo</a>. As previously mentioned, everything here is freely accessible. They were made with Godot 4.4.1 Stable and Blender 4.5.1 LTS.</p>
+<p><a href="https://www.jmeiners.com/pre-rendered-backgrounds/">Justin Meiners - An Adventure in Pre-Rendered Backgrounds</a>. Huge inspiration for this post and some of my early attempts. Did not take much from it for this project but worth mentioning.</p>
+<p><a href="https://www.youtube.com/watch?v=oFMcilEdfs0">FinePointCGI - Creating A PS1 Resident Evil Prerender System In Godot</a>. Gave me a big boost to start my Godot attempt. Here I found out about .gltf files and it changed everything.</p>
+]]></content:encoded>
+    </item>
   </channel>
 </rss>
