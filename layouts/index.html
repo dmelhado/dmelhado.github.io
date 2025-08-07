@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{ .Content }}
 
-<section class="recent-posts">
+<content>
     <h2>Recent Posts</h2>
     <ul>
         {{ range first 5 (where .Site.RegularPages "Section" "blog") }}
@@ -11,5 +11,5 @@
         </li>
         {{ end }}
     </ul>
-</section>
+</content>
 {{ end }}
