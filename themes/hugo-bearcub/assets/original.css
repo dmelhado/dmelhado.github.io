@@ -23,7 +23,8 @@ h5,
 h6,
 strong,
 b {
-   color: #eee;
+  color: #eee;
+  text-align: left;
 }
 
 a {
@@ -193,4 +194,24 @@ figcaption > p {
   margin-top: 0.2em;
   margin-bottom: 1em;
   font-style: italic;
+}
+
+.recent-posts {
+  margin-top: 3em;
+  padding: 1em;
+  background: #f7f7f7;
+  border-radius: 8px;
+}
+
+.recent-posts h2 {
+  margin-bottom: 0.5em;
+}
+
+.recent-posts ul {
+  list-style: none;
+  padding: 0;
+}
+
+.recent-posts li {
+  margin-bottom: 0.4em;
 }

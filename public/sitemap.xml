@@ -3,19 +3,29 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2025-07-30T23:51:01-03:00</lastmod>
+    <lastmod>2025-08-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/</loc>
-    <lastmod>2025-07-30T23:51:01-03:00</lastmod>
+    <lastmod>2025-08-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/prerendered-backgrounds-in-godot/</loc>
-    <lastmod>2025-07-30T23:51:01-03:00</lastmod>
+    <loc>http://localhost:1313/tags/blender/</loc>
+    <lastmod>2025-08-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/godot/</loc>
+    <lastmod>2025-08-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/prerendered-background/</loc>
+    <lastmod>2025-08-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/prerendered-backgrounds-with-blender-and-godot/</loc>
+    <lastmod>2025-08-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/</loc>
+    <lastmod>2025-08-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/projects/</loc>
     <lastmod>2025-07-30T12:40:20-03:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
-  </url><url>
-    <loc>http://localhost:1313/tags/</loc>
   </url>
 </urlset>
