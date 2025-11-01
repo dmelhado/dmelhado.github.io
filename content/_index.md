@@ -16,6 +16,9 @@ Personal website where I'll post some of my thoughts, experiments, failures, and
 - Since then I explored other skills, including electronic repairs and web development (which led to this site). Most of them self-taught.
 - Today I juggle freelance phone and computer repairs and food delivery, while looking for better opportunities. It's not glamorous, but it pays the bills. 
 
+
+
+
 ## Some of my interests
 - FOSS software
 - 3D Modeling and computer graphics
