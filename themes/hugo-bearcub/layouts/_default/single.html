@@ -13,16 +13,31 @@
 </content>
 <p>
   {{ range (.GetTerms "tags") }}
-    <a class="blog-tags" href="{{ .RelPermalink }}">#{{ lower .LinkTitle }}</a>
+  <a class="blog-tags" href="{{ .RelPermalink }}">#{{ lower .LinkTitle }}</a>
   {{ end }}
 </p>
 {{ if not .Params.hideReply }}
 {{ with .Site.Params.author.email }}
-  <p>
-    <a href='mailto:{{ . }}?subject={{ i18n "email-subject" }}"{{ default $.Site.Title $.Page.Title }}"'>
-      {{ i18n "email-reply" }} ↪
-    </a>
-  </p>
+<p>
+  <a href='mailto:{{ . }}?subject={{ i18n "email-subject" }}"{{ default $.Site.Title $.Page.Title }}"'>
+    {{ i18n "email-reply" }} ↪
+  </a>
+</p>
 {{ end }}
+<script src="https://giscus.app/client.js"
+        data-repo="dmelhado/dmelhado.github.io"
+        data-repo-id="R_kgDOO2rsXQ"
+        data-category="General"
+        data-category-id="DIC_kwDOO2rsXc4C0KW8"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
 {{ end }}
 {{ end }}
