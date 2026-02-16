@@ -9,8 +9,22 @@
     <managingEditor>dmelhado@dc.uba.ar (Dante Melhado)</managingEditor>
     <webMaster>dmelhado@dc.uba.ar (Dante Melhado)</webMaster>
     <copyright>dmelhado@dc.uba.ar</copyright>
-    <lastBuildDate>Thu, 07 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JavaStore</title>
+      <link>http://localhost:1313/projects/javastore/</link>
+      <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate><author>dmelhado@dc.uba.ar (Dante Melhado)</author>
+      <guid>http://localhost:1313/projects/javastore/</guid>
+      <description>&lt;p&gt;This project was originally developed as part of a technical interview assignment. It focuses exclusively on business logic and unit testing.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Originally developed in August 2025.&lt;/li&gt;&#xA;&lt;li&gt;Refactored and published in February 2026.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Check out the &lt;a href=&#34;https://github.com/dmelhado/JavaStore&#34;&gt;repo&lt;/a&gt;&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<p>This project was originally developed as part of a technical interview assignment. It focuses exclusively on business logic and unit testing.</p>
+<ul>
+<li>Originally developed in August 2025.</li>
+<li>Refactored and published in February 2026.</li>
+</ul>
+<p>Check out the <a href="https://github.com/dmelhado/JavaStore">repo</a></p>
+]]></content:encoded>
+    </item>
     <item>
       <title>Prerendered Backgrounds with Blender and Godot</title>
       <link>http://localhost:1313/blog/prerendered-backgrounds-with-blender-and-godot/</link>
